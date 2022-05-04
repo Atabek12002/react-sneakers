@@ -1,0 +1,23 @@
+.card {
+  position: relative;
+  border: 1px solid #f3f3f3;
+  border-radius: 40px;
+  transition: box-shadow 0.3s ease-in-out, transform 0.2s ease-in-out;
+  padding: 30px;
+  .card-icon {
+    width: 100%;
+  }
+  .plus {
+    cursor: pointer;
+  }
+  &:hover {
+    box-shadow: 0 20px 35px rgba(0, 0, 0, 0.1);
+    transform: translateY(-7px);
+  }
+  .favorite {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    cursor: pointer;
+  }
+}
