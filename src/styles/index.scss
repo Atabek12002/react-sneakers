@@ -1,12 +1,17 @@
 // Обнуление стили __ start
-@import 'null';
+@import './scss/null';
 // Обнуление стили __ end
 // Media запросы __ start
-@import 'breakpoints';
+@import './scss/breakpoints';
 // Media запросы __ end
 // АДАПТИВНЫЙ ЩРИФТ __ start
-@import 'mixin';
+@import './scss/mixin';
 // АДАПТИВНЫЙ ЩРИФТ __ end
+body {
+  display: flex;
+  flex-direction: column;
+  margin: 40px 0;
+}
 .wrapper {
   max-width: 1200px;
   margin: 0 auto;
@@ -14,22 +19,52 @@
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.04);
   border-radius: 20px;
 }
-.header {
-  border-bottom: 1px solid #eaeaea;
-  &-rigth {
-    gap: 30px !important;
+.green_btn {
+  position: relative;
+  background: #9dd558;
+  border-radius: 18px;
+  padding: 18px 0;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  transition: transform 0.2s ease-in-out;
+  &:active {
+    transform: scale(0.95);
+  }
+  &:hover {
+    img {
+      transition: 0.3s linear;
+      right: 25px;
+    }
+  }
+  img {
+    position: absolute;
+    top: 50%;
+    right: 30px;
+    transform: translateY(-50%);
+  }
+}
+.search {
+  gap: 20px;
+  &_block {
+    padding: 9px 18px;
+    border: 1px solid #f3f3f3;
+    border-radius: 10px;
+    gap: 12px;
+    input {
+      width: 150px;
+      font-size: 16px;
+      &::placeholder {
+        color: #c4c4c4;
+      }
+    }
   }
 }
 .cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 40px;
-  .card {
-    padding: 20px 28px;
-    background: #ffffff;
-    border: 1px solid #f3f3f3;
-    border-radius: 40px;
-    gap: 15px;
-    overflow: hidden;
+  @include breakpoint(lg) {
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
   }
 }

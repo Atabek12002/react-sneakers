@@ -1,0 +1,13 @@
+.header {
+  border-bottom: 1px solid #eaeaea;
+  h3 {
+    color: #000;
+  }
+  p {
+    color: #000;
+    opacity: 0.4;
+  }
+  &-rigth {
+    gap: 30px !important;
+  }
+}

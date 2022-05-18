@@ -1,0 +1,14 @@
+.cartEmpty {
+  display: flex;
+  flex-direction: column;
+  margin: auto 0;
+  h2 {
+    font-weight: 600;
+  }
+  p {
+    font-size: 16px;
+  }
+  img {
+    margin: 0 auto;
+  }
+}

@@ -1,48 +1,107 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
+
+import { Header, Drawer } from './components';
+import { Home, Favorites, Orders } from './pages';
+
+import { AppContext } from './context';
+import { api } from './api';
 
 const App = () => {
+  const [items, setItems] = useState([]);
+  const [cartItems, setCartItems] = useState([]);
+  const [favorites, setFAvorites] = useState([]);
+  const [cartOpened, setCartOpened] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const onAddToCart = async (obj) => {
+    const findItem = cartItems.find((item) => item.parentId === obj.id);
+    try {
+      if (findItem) {
+        setCartItems((prev) => prev.filter((item) => item.parentId !== obj.id));
+        await api.delete(`/cart/${findItem.id}`);
+      } else {
+        setCartItems((prev) => [...prev, obj]);
+        await api.post('/cart', obj);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const onRemoverItem = async (id) => {
+    try {
+      setCartItems((prev) => prev.filter((item) => item.id !== id));
+      await api.delete(`/cart/${id}`);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const onAddToFavorite = async (obj) => {
+    const findItem = favorites.find((item) => item.id === obj.id);
+    try {
+      if (findItem) {
+        setFAvorites((prev) => prev.filter((item) => item.id !== obj.id));
+        await api.delete(`/favorites/${findItem.id}`);
+      } else {
+        setFAvorites((prev) => [...prev, obj]);
+        await api.post('/favorites', obj);
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const isItemAdded = (id) => {
+    return cartItems.some((obj) => obj.parentId === id);
+  };
+  const isItemFavorite = (id) => {
+    return favorites.some((obj) => obj.parentId === id);
+  };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const items = await api.get('/items');
+        const cart = await api.get('/cart');
+        const favorites = await api.get('/favorites');
+        setIsLoading(false);
+        setCartItems(cart.data);
+        setFAvorites(favorites.data);
+        setItems(items.data);
+      } catch (error) {
+        alert('Serverde qatelik bar');
+        console.log(error.message);
+      }
+    })();
+  }, []);
+
+  const values = {
+    items,
+    cartItems,
+    setCartItems,
+    favorites,
+    isItemAdded,
+    isItemFavorite,
+    onAddToCart,
+    onAddToFavorite,
+    cartOpened,
+    setCartOpened,
+    onRemoverItem,
+  };
   return (
-    <div className="wrapper mt-40 pb-40">
-      <header className="header d-flex justify-between align-center p-40">
-        <div className="header_left d-flex align-center cu-p">
-          <img className="mr-15" width={40} height={40} src="img/logo.png" alt="logo" />
-          <div>
-            <h3 className="mb-5 text-uppercase">React Sneakers</h3>
-            <p className="opacity-6">Магазин лучших кроссовок</p>
-          </div>
-        </div>
-        <ul className="header-rigth d-flex align-center">
-          <li className="d-flex align-center cu-p">
-            <img src="img/cart.svg" alt="" />
-            <span className="ml-10">1205 руб.</span>
-          </li>
-          <li className="cu-p">
-            <img src="img/heart.svg" alt="" />
-          </li>
-          <li className="cu-p">
-            <img src="img/user.svg" alt="" />
-          </li>
-        </ul>
-      </header>
-      <div className="content p-40">
-        <h1 className="pb-40">Все кроссовки</h1>
-        <div className="cards">
-          <div className="card d-flex flex-column">
-            <img width={133} height={112} src="img/sneakers/1.jpg" alt="card-sneakers" />
-            <p>Мужские Кроссовки Nike Blazer Mid Suede</p>
-            <div className="d-flex justify-between align-center">
-              <div className="d-flex flex-column">
-                <span className="mb-5">Цена:</span>
-                <b>12 999 руб.</b>
-              </div>
-              <button>
-                <img width={32} height={32} src="img/btn-plus.svg" alt="plus" />
-              </button>
-            </div>
-          </div>
-        </div>
+    <AppContext.Provider value={values}>
+      <div className="wrapper">
+        <Header />
+        <Drawer />
+        <Routes>
+          <Route path="/" element={<Home isLoading={isLoading} />} />
+          <Route path="/favorites" element={<Favorites />} />
+          <Route path="/orders" element={<Orders />} />
+        </Routes>
       </div>
-    </div>
+    </AppContext.Provider>
   );
 };
 
